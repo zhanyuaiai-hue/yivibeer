@@ -147,6 +147,15 @@ const changeQuote = () => {
 }
 
 const downloadImage = async () => {
+  // 检测是否为 Safari
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+
+  if (isSafari) {
+    // Safari 使用长按保存方案
+    alert('📱 Safari 浏览器保存方法：\n\n1. 长按下方图片\n2. 选择"存储图像"或"添加到照片"\n\n💡 提示：海报已准备好，请长按保存！')
+    return
+  }
+
   try {
     // 等待渲染
     await new Promise(resolve => setTimeout(resolve, 300))
@@ -158,10 +167,10 @@ const downloadImage = async () => {
     }
 
     const canvas = await html2canvas(element, {
-      backgroundColor: '#ffecd2', // 使用渐变起始色
+      backgroundColor: '#ffecd2',
       scale: 2,
       useCORS: true,
-      logging: true // 开启日志看看问题
+      logging: false
     })
 
     const link = document.createElement('a')
@@ -171,10 +180,10 @@ const downloadImage = async () => {
     link.href = canvas.toDataURL('image/png')
     link.click()
 
-    alert('✅ 图片已保存！')
+    alert('✅ 图片已保存到下载文件夹！')
   } catch (error) {
     console.error('保存图片失败:', error)
-    alert('❌ 保存失败：' + error.message + '\n\n💡 请截图保存或长按图片保存')
+    alert('❌ 保存失败\n\n💡 请长按海报图片手动保存')
   }
 }
 
