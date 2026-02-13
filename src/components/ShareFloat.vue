@@ -140,6 +140,8 @@ const openShare = () => {
 
 const closeShare = () => {
   isOpen.value = false
+  // 清空 Safari 生成的图片，下次打开重新生成
+  safariImageUrl.value = ''
 }
 
 const changeQuote = () => {
@@ -148,6 +150,9 @@ const changeQuote = () => {
     newIndex = Math.floor(Math.random() * quotes.length)
   } while (newIndex === currentQuoteIndex.value)
   currentQuoteIndex.value = newIndex
+
+  // 清空 Safari 生成的图片，重新显示可编辑的海报
+  safariImageUrl.value = ''
 }
 
 const downloadImage = async () => {
