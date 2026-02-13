@@ -1,0 +1,149 @@
+<template>
+  <div class="diary-container">
+    <div class="header">
+      <h1>醉境</h1>
+      <button class="add-btn" @click="showAddForm = !showAddForm">
+        <span v-if="!showAddForm">+ 记录新的一杯</span>
+        <span v-else>取消</span>
+      </button>
+    </div>
+
+    <div v-if="showAddForm" class="add-form">
+      <input v-model="newBeer.name" placeholder="啤酒名称" class="input-field" />
+      <input v-model="newBeer.brewery" placeholder="酒厂" class="input-field" />
+      <input v-model="newBeer.style" placeholder="风格（如IPA、世涛等）" class="input-field" />
+      <input v-model="newBeer.abv" placeholder="酒精度" class="input-field" type="number" step="0.1" />
+      <textarea v-model="newBeer.notes" placeholder="品鉴笔记..." class="textarea-field"></textarea>
+      <div class="rating-section">
+        <label>评分：</label>
+        <div class="stars">
+          <span v-for="star in 5" :key="star" @click="newBeer.rating = star" class="star" :class="{ active: star <= newBeer.rating }">★</span>
+        </div>
+      </div>
+      <button @click="addBeer" class="submit-btn">保存记录</button>
+    </div>
+
+    <div class="records-list">
+      <div v-if="beers.length === 0" class="empty-state">
+        <p>还没有记录，开始记录你的第一杯精酿吧！</p>
+      </div>
+      <div v-for="beer in beers" :key="beer.id" class="beer-card">
+        <div class="card-header">
+          <h3>{{ beer.name }}</h3>
+          <div class="stars">
+            <span v-for="star in 5" :key="star" class="star" :class="{ active: star <= beer.rating }">★</span>
+          </div>
+        </div>
+        <div class="card-info">
+          <span class="tag">{{ beer.brewery }}</span>
+          <span class="tag">{{ beer.style }}</span>
+          <span class="tag">{{ beer.abv }}%</span>
+        </div>
+        <p class="notes">{{ beer.notes }}</p>
+        <div class="card-footer">
+          <span class="date">{{ formatDate(beer.date) }}</span>
+          <button @click="deleteBeer(beer.id)" class="delete-btn">删除</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue'
+
+const showAddForm = ref(false)
+const beers = ref([])
+const newBeer = ref({ name: '', brewery: '', style: '', abv: '', notes: '', rating: 0 })
+
+onMounted(() => {
+  const saved = localStorage.getItem('beerDiary')
+  if (saved) beers.value = JSON.parse(saved)
+})
+
+const addBeer = () => {
+  if (!newBeer.value.name) {
+    alert('请至少填写啤酒名称')
+    return
+  }
+  const beer = { id: Date.now(), ...newBeer.value, date: new Date().toISOString() }
+  beers.value.unshift(beer)
+  localStorage.setItem('beerDiary', JSON.stringify(beers.value))
+  newBeer.value = { name: '', brewery: '', style: '', abv: '', notes: '', rating: 0 }
+  showAddForm.value = false
+}
+
+const deleteBeer = (id) => {
+  if (confirm('确定要删除这条记录吗？')) {
+    beers.value = beers.value.filter(b => b.id !== id)
+    localStorage.setItem('beerDiary', JSON.stringify(beers.value))
+  }
+}
+
+const formatDate = (dateString) => {
+  const date = new Date(dateString)
+  return date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })
+}
+</script>
+
+<style scoped>
+.diary-container { max-width: 800px; margin: 0 auto; }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+.header h1 { font-size: 2rem; font-weight: 600; }
+.add-btn { background: #007AFF; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 12px; font-size: 1rem; cursor: pointer; transition: all 0.2s; }
+.add-btn:hover { background: #0051D5; transform: translateY(-1px); }
+.add-form { background: white; padding: 2rem; border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.input-field, .textarea-field { width: 100%; padding: 0.875rem; border: 1px solid #E5E5EA; border-radius: 10px; font-size: 1rem; margin-bottom: 1rem; transition: border-color 0.2s; }
+.input-field:focus, .textarea-field:focus { outline: none; border-color: #007AFF; }
+.textarea-field { min-height: 100px; resize: vertical; font-family: inherit; }
+.rating-section { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+.stars { display: flex; gap: 0.25rem; }
+.star { font-size: 1.5rem; color: #E5E5EA; cursor: pointer; transition: color 0.2s; }
+.star.active { color: #FFD700; }
+.submit-btn { width: 100%; background: #34C759; color: white; border: none; padding: 0.875rem; border-radius: 12px; font-size: 1rem; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+.submit-btn:hover { background: #28A745; transform: translateY(-1px); }
+.empty-state { text-align: center; padding: 4rem 2rem; color: #8E8E93; }
+.beer-card { background: white; padding: 1.5rem; border-radius: 16px; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: transform 0.2s, box-shadow 0.2s; }
+.beer-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+.card-header h3 { font-size: 1.25rem; font-weight: 600; margin: 0; }
+.card-info { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.tag { background: #F2F2F7; color: #3A3A3C; padding: 0.375rem 0.75rem; border-radius: 8px; font-size: 0.875rem; }
+.notes { color: #3A3A3C; line-height: 1.6; margin-bottom: 1rem; }
+.card-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid #F2F2F7; }
+.date { color: #8E8E93; font-size: 0.875rem; }
+.delete-btn { background: none; color: #FF3B30; border: none; padding: 0.5rem; cursor: pointer; font-size: 0.875rem; transition: opacity 0.2s; }
+.delete-btn:hover { opacity: 0.7; }
+</style>
+
+.autocomplete-wrapper {
+  position: relative;
+}
+
+.autocomplete-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--color-paper);
+  border: 1px solid var(--color-amber);
+  border-top: none;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 100;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.autocomplete-item {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--color-ink);
+}
+
+.autocomplete-item:hover {
+  background: var(--color-cream);
+  color: var(--color-amber);
+}
