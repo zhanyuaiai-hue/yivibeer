@@ -148,21 +148,36 @@ const changeQuote = () => {
 
 const downloadImage = async () => {
   try {
+    // 确保元素完全渲染
+    await new Promise(resolve => setTimeout(resolve, 300))
+
     const canvas = await html2canvas(shareCard.value, {
       backgroundColor: '#fefdfb',
-      scale: 2,
-      useCORS: true
+      scale: 3, // 提高清晰度
+      useCORS: true,
+      allowTaint: true,
+      logging: false,
+      width: shareCard.value.offsetWidth,
+      height: shareCard.value.offsetHeight,
+      windowWidth: shareCard.value.scrollWidth,
+      windowHeight: shareCard.value.scrollHeight,
+      // 确保捕获所有内容
+      scrollX: 0,
+      scrollY: 0,
+      x: 0,
+      y: 0
     })
 
+    // 转换为高质量图片
     const link = document.createElement('a')
     link.download = `YIVI祝酒词_${Date.now()}.png`
-    link.href = canvas.toDataURL('image/png')
+    link.href = canvas.toDataURL('image/png', 1.0)
     link.click()
 
-    alert('✅ 图片已保存！')
+    alert('✅ 图片已保存到下载文件夹！')
   } catch (error) {
     console.error('保存图片失败:', error)
-    alert('保存失败，请长按图片手动保存')
+    alert('💡 提示：请长按图片手动保存，或截图保存')
   }
 }
 
@@ -288,10 +303,15 @@ const copyText = () => {
   padding: 48px 32px;
   margin-bottom: 32px;
   overflow: hidden;
-  min-height: 500px;
+  min-height: 600px;
+  max-width: 500px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
 .card-bg {
