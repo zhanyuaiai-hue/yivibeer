@@ -18,8 +18,11 @@
           <div class="share-modal" @click.stop>
             <button @click="closeShare" class="close-btn">✕</button>
 
+            <!-- Safari 生成的图片（可长按保存）-->
+            <img v-if="safariImageUrl" :src="safariImageUrl" class="safari-poster" alt="YIVI 祝酒词海报" />
+
             <!-- 祝酒词画面 -->
-            <div ref="shareCard" class="share-card">
+            <div v-show="!safariImageUrl" ref="shareCard" class="share-card">
               <div class="card-bg"></div>
               <div class="card-content">
                 <h1 class="site-name">YIVI</h1>
@@ -68,6 +71,7 @@ import html2canvas from 'html2canvas'
 const isOpen = ref(false)
 const currentQuoteIndex = ref(0)
 const shareCard = ref(null)
+const safariImageUrl = ref('') // Safari 生成的图片 URL
 
 // 精选50条关于酒的经典诗词、名言和歌词
 const quotes = [
@@ -151,13 +155,30 @@ const downloadImage = async () => {
   const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
 
   if (isSafari) {
-    // Safari 使用长按保存方案
-    alert('📱 Safari 浏览器保存方法：\n\n1. 长按下方图片\n2. 选择"存储图像"或"添加到照片"\n\n💡 提示：海报已准备好，请长按保存！')
+    // Safari：生成图片并显示为 img，用户可长按保存
+    try {
+      await new Promise(resolve => setTimeout(resolve, 300))
+
+      const canvas = await html2canvas(shareCard.value, {
+        backgroundColor: '#ffecd2',
+        scale: 2,
+        useCORS: true,
+        logging: false
+      })
+
+      // 转换为图片 URL 并显示
+      safariImageUrl.value = canvas.toDataURL('image/png')
+
+      alert('📱 长按下方图片即可保存\n\n选择"存储图像"或"添加到照片"')
+    } catch (error) {
+      console.error('生成图片失败:', error)
+      alert('❌ 生成失败，请截图保存')
+    }
     return
   }
 
+  // 其他浏览器：直接下载
   try {
-    // 等待渲染
     await new Promise(resolve => setTimeout(resolve, 300))
 
     const element = shareCard.value
@@ -318,6 +339,18 @@ const copyText = () => {
   align-items: center;
   justify-content: center;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+/* Safari 生成的图片 */
+.safari-poster {
+  max-width: 500px;
+  width: 100%;
+  border-radius: 16px;
+  margin-bottom: 32px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .card-bg {
