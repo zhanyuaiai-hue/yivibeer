@@ -35,7 +35,7 @@
 
                 <div class="card-footer">
                   <p class="invitation">邀你共饮一杯</p>
-                  <p class="url">yivi-craft-beer.vercel.app</p>
+                  <p class="url">yivibeer.pages.dev</p>
                 </div>
               </div>
             </div>

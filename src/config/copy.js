@@ -4,7 +4,7 @@ export const copyConfig = {
   site: {
     name: 'YIVI',
     tagline: '精酿手记',
-    description: '一个关于精酿啤酒的个人志',
+    description: '今天我来举杯',
     copyright: '© 2026 YIVI'
   },
 
