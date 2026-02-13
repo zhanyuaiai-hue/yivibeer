@@ -148,30 +148,40 @@ const changeQuote = () => {
 
 const downloadImage = async () => {
   try {
-    // 确保元素完全渲染
-    await new Promise(resolve => setTimeout(resolve, 300))
+    // 等待元素完全渲染
+    await new Promise(resolve => setTimeout(resolve, 500))
 
     const canvas = await html2canvas(shareCard.value, {
-      backgroundColor: '#fefdfb',
-      scale: 3, // 提高清晰度
+      backgroundColor: null, // 保留透明背景，让渐变完整显示
+      scale: 4, // 超高清晰度
       useCORS: true,
       allowTaint: true,
       logging: false,
-      width: shareCard.value.offsetWidth,
-      height: shareCard.value.offsetHeight,
-      windowWidth: shareCard.value.scrollWidth,
-      windowHeight: shareCard.value.scrollHeight,
-      // 确保捕获所有内容
-      scrollX: 0,
-      scrollY: 0,
-      x: 0,
-      y: 0
+      // 让 html2canvas 自动计算尺寸
+      foreignObjectRendering: true,
+      // 确保渐变和阴影正确渲染
+      removeContainer: true
     })
+
+    // 创建一个新的 canvas 添加白色背景
+    const finalCanvas = document.createElement('canvas')
+    finalCanvas.width = canvas.width
+    finalCanvas.height = canvas.height
+    const ctx = finalCanvas.getContext('2d')
+
+    // 填充白色背景
+    ctx.fillStyle = '#fefdfb'
+    ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height)
+
+    // 绘制海报
+    ctx.drawImage(canvas, 0, 0)
 
     // 转换为高质量图片
     const link = document.createElement('a')
-    link.download = `YIVI祝酒词_${Date.now()}.png`
-    link.href = canvas.toDataURL('image/png', 1.0)
+    const now = new Date()
+    const dateStr = `${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}`
+    link.download = `YIVI祝酒词_${dateStr}.png`
+    link.href = finalCanvas.toDataURL('image/png', 1.0)
     link.click()
 
     alert('✅ 图片已保存到下载文件夹！')
