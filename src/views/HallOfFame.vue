@@ -37,6 +37,7 @@
           <div class="card-meta">
             <span class="brewery">{{ beer.brewery }}</span>
             <span class="style-tag">{{ beer.style }}</span>
+            <span v-if="beer.author" class="author-tag">by {{ beer.author }}</span>
           </div>
           <p class="reason">{{ beer.reason }}</p>
           <div class="card-footer">
@@ -66,7 +67,8 @@ const currentUser = computed(() => localStorage.getItem('yivi_current_user'))
 const copy = computed(() => copyConfig.hall)
 
 onMounted(() => {
-  const storageKey = isGuest.value ? 'beerHallOfFame' : `beerHallOfFame_${currentUser.value}`
+  // 使用公共存储key，所有用户共享宣言
+  const storageKey = 'beerHallOfFame_public'
   const saved = localStorage.getItem(storageKey)
   if (saved) favorites.value = JSON.parse(saved)
 })
@@ -81,9 +83,14 @@ const addFavorite = () => {
     alert(copy.value.errorRequired)
     return
   }
-  const favorite = { id: Date.now(), ...newFavorite.value, addedDate: new Date().toISOString() }
+  const favorite = {
+    id: Date.now(),
+    ...newFavorite.value,
+    addedDate: new Date().toISOString(),
+    author: currentUser.value // 添加作者信息
+  }
   favorites.value.unshift(favorite)
-  const storageKey = `beerHallOfFame_${currentUser.value}`
+  const storageKey = 'beerHallOfFame_public'
   localStorage.setItem(storageKey, JSON.stringify(favorites.value))
   newFavorite.value = { name: '', brewery: '', style: '', reason: '' }
   showAddForm.value = false
@@ -102,7 +109,7 @@ const removeFavorite = (id) => {
 
   if (confirm(copy.value.removeConfirm)) {
     favorites.value = favorites.value.filter(b => b.id !== id)
-    const storageKey = `beerHallOfFame_${currentUser.value}`
+    const storageKey = 'beerHallOfFame_public'
     localStorage.setItem(storageKey, JSON.stringify(favorites.value))
   }
 }
@@ -145,6 +152,7 @@ h1 { font-size: 2.5rem; font-weight: 700; text-align: center; margin-bottom: 0.5
 .card-meta { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
 .brewery { color: #007AFF; font-weight: 500; font-size: 0.875rem; }
 .style-tag { background: #F2F2F7; color: #3A3A3C; padding: 0.25rem 0.75rem; border-radius: 6px; font-size: 0.875rem; }
+.author-tag { background: #34C759; color: white; padding: 0.25rem 0.75rem; border-radius: 6px; font-size: 0.875rem; font-style: italic; }
 .reason { color: #3A3A3C; line-height: 1.6; margin-bottom: 1rem; font-style: italic; }
 .card-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid #F2F2F7; }
 .added-date { color: #8E8E93; font-size: 0.875rem; }

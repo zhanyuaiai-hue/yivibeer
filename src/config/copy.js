@@ -19,7 +19,7 @@ export const copyConfig = {
     hint: '初次使用？输入任意用户名密码即可创建账号',
     hintDetail: '数据将保存在本地浏览器中',
     errorRequired: '请输入用户名和密码',
-    errorPassword: '密码错误'
+    errorPassword: '密码错误，该用户名已被占用'
   },
 
   // 导航栏

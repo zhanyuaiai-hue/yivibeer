@@ -134,6 +134,7 @@
           <div class="entry-header">
             <div class="entry-meta">
               <span class="entry-number mono">No.{{ beers.length - index }}</span>
+              <span v-if="beer.author" class="entry-author">by {{ beer.author }}</span>
               <span class="entry-date mono">{{ formatDate(beer.date) }}</span>
             </div>
             <button v-if="!isGuest" @click="deleteBeer(beer.id)" class="btn-delete">{{ copy.deleteButton }}</button>
@@ -202,8 +203,8 @@ const selectBrewery = (brewery) => { newBeer.value.brewery = brewery; showBrewer
 const hideBrewerySuggestions = () => { setTimeout(() => { showBrewerySuggestions.value = false }, 200) }
 
 onMounted(() => {
-  // 根据用户加载对应的数据
-  const storageKey = isGuest.value ? 'beerDiary' : `beerDiary_${currentUser.value}`
+  // 使用公共存储key，所有用户共享日记
+  const storageKey = 'beerDiary_public'
   const saved = localStorage.getItem(storageKey)
   if (saved) beers.value = JSON.parse(saved)
 })
@@ -222,11 +223,12 @@ const addBeer = () => {
   const beer = {
     id: Date.now(),
     ...newBeer.value,
-    date: new Date().toISOString()
+    date: new Date().toISOString(),
+    author: currentUser.value // 添加作者信息
   }
 
   beers.value.unshift(beer)
-  const storageKey = `beerDiary_${currentUser.value}`
+  const storageKey = 'beerDiary_public'
   localStorage.setItem(storageKey, JSON.stringify(beers.value))
 
   newBeer.value = {
@@ -248,7 +250,7 @@ const deleteBeer = (id) => {
 
   if (confirm(copy.value.deleteConfirm)) {
     beers.value = beers.value.filter(b => b.id !== id)
-    const storageKey = `beerDiary_${currentUser.value}`
+    const storageKey = 'beerDiary_public'
     localStorage.setItem(storageKey, JSON.stringify(beers.value))
   }
 }
@@ -579,6 +581,12 @@ const formatDate = (dateString) => {
 .entry-number {
   color: var(--color-amber);
   font-weight: 600;
+}
+
+.entry-author {
+  color: var(--color-charcoal);
+  font-weight: 500;
+  font-style: italic;
 }
 
 .entry-date {
