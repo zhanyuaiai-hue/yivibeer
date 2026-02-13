@@ -326,12 +326,12 @@ const copyText = () => {
 .share-card {
   position: relative;
   background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-  border-radius: 16px;
-  padding: 48px 32px;
+  border-radius: 12px;
+  padding: 40px 28px;
   margin-bottom: 32px;
   overflow: hidden;
-  min-height: 600px;
-  max-width: 500px;
+  min-height: 480px;
+  max-width: 420px;
   width: 100%;
   margin-left: auto;
   margin-right: auto;
@@ -343,9 +343,9 @@ const copyText = () => {
 
 /* Safari 生成的图片 */
 .safari-poster {
-  max-width: 500px;
+  max-width: 420px;
   width: 100%;
-  border-radius: 16px;
+  border-radius: 12px;
   margin-bottom: 32px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   display: block;
@@ -374,78 +374,81 @@ const copyText = () => {
 
 .site-name {
   font-family: var(--font-display);
-  font-size: 3rem;
+  font-size: 2.5rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.15em;
   color: rgba(0, 0, 0, 0.9);
-  margin: 0 0 8px 0;
+  margin: 0 0 6px 0;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .site-tagline {
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: rgba(0, 0, 0, 0.7);
-  margin: 0 0 40px 0;
-  letter-spacing: 0.2em;
+  margin: 0 0 32px 0;
+  letter-spacing: 0.25em;
 }
 
 .quote-container {
   position: relative;
-  margin: 48px 0;
-  padding: 0 32px;
+  margin: 36px 0;
+  padding: 0 24px;
 }
 
 .quote-mark {
   font-family: Georgia, serif;
-  font-size: 4rem;
+  font-size: 3rem;
   color: rgba(0, 0, 0, 0.2);
   line-height: 1;
   position: absolute;
-  top: -20px;
+  top: -16px;
   left: 0;
 }
 
 .quote-mark.end {
   top: auto;
-  bottom: -40px;
+  bottom: -30px;
   left: auto;
   right: 0;
 }
 
 .quote-text {
   font-family: var(--font-display);
-  font-size: 1.5rem;
-  line-height: 1.8;
+  font-size: 1.3rem;
+  line-height: 1.7;
   color: rgba(0, 0, 0, 0.9);
   margin: 0;
   font-weight: 500;
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 .quote-author {
-  font-size: 1.125rem;
+  font-size: 1rem;
   color: rgba(0, 0, 0, 0.7);
-  margin: 24px 0 0 0;
+  margin: 20px 0 0 0;
   font-style: italic;
 }
 
 .card-footer {
-  margin-top: 48px;
-  padding-top: 24px;
+  margin-top: 36px;
+  padding-top: 20px;
   border-top: 2px solid rgba(0, 0, 0, 0.1);
 }
 
 .invitation {
-  font-size: 1.125rem;
+  font-size: 1rem;
   color: rgba(0, 0, 0, 0.8);
-  margin: 0 0 8px 0;
+  margin: 0 0 6px 0;
   font-weight: 500;
 }
 
 .url {
   font-family: var(--font-mono);
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   color: rgba(0, 0, 0, 0.6);
   margin: 0;
+  letter-spacing: 0.02em;
 }
 
 /* 操作按钮 */
